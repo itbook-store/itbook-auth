@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class ItbookAuthApplication {
 
     public static void main(String[] args) {
+        System.out.println("남의거 변경");
         SpringApplication.run(ItbookAuthApplication.class, args);
     }
 
