@@ -6,6 +6,7 @@ public class Test {
         System.out.println("adsfad");
         System.out.println("asdfsafasf");
         System.out.println("pull request test");
-
+        System.out.println("pull request test");
+        System.out.println("jenkins test");
     }
 }
