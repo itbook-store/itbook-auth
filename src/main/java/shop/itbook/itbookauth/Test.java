@@ -7,5 +7,6 @@ public class Test {
         System.out.println("asdfsafasf");
         System.out.println("pull request test");
         System.out.println("jenkins test");
+        System.out.println("jenkins development commit push and pull request test");
     }
 }
