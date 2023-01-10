@@ -1,17 +1,13 @@
 package shop.itbook.itbookauth;
 
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import shop.itbook.itbookauth.config.RedisConfig;
 
 @SpringBootApplication
-@ConfigurationPropertiesScan
 public class ItbookAuthApplication {
 
     public static void main(String[] args) {
+        System.out.println("남의거 변경 포크");
         SpringApplication.run(ItbookAuthApplication.class, args);
     }
 
