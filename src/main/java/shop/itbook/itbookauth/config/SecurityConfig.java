@@ -50,7 +50,7 @@ public class SecurityConfig {
             .cors()
             .disable()
             .formLogin()
-            .loginProcessingUrl("/auth/login") // 이걸로 처리한다. Controller를 만들지 않고.
+            .loginProcessingUrl("/auth/login")
             .successHandler(customLoginSuccessHandler(null, null))
             .failureHandler(customFailureHandler())
             .and()
