@@ -7,6 +7,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
+ * ShopServer로 부터 받아올 회원에 대한 정보 클래스 입니다.
+ *
  * @author 강명관
  * @since 1.0
  */
