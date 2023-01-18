@@ -6,9 +6,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Objects;
-import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,16 +34,11 @@ public class CustomAuthenticationFilter extends AbstractAuthenticationProcessing
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request,
                                                 HttpServletResponse response)
-        throws AuthenticationException, IOException, ServletException {
-
+        throws AuthenticationException, IOException {
 
         Map<String, String> requestBody = getRequestBody(request);
         String memberId = requestBody.get("memberId");
         String password = requestBody.get("password");
-
-        log.info("memberId {}", memberId);
-        log.info("password {}", password);
-
 
         return getAuthenticationManager().authenticate(
             new UsernamePasswordAuthenticationToken(memberId, password)
@@ -59,7 +52,7 @@ public class CustomAuthenticationFilter extends AbstractAuthenticationProcessing
      * @return the request body
      * @throws IOException the io exception
      */
-    private Map getRequestBody(HttpServletRequest request) throws IOException {
+    private Map<String, String> getRequestBody(HttpServletRequest request) throws IOException {
 
         ServletInputStream inputStream = request.getInputStream();
 
@@ -86,8 +79,7 @@ public class CustomAuthenticationFilter extends AbstractAuthenticationProcessing
      * @return the map
      * @throws JsonProcessingException the json processing exception
      */
-    private Map jsonStringToMap(String jsonString) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(jsonString, Map.class);
+    private Map<String, String> jsonStringToMap(String jsonString) throws JsonProcessingException {
+        return new ObjectMapper().readValue(jsonString, Map.class);
     }
 }

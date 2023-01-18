@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * @author 강명관
  * @since 1.0
  */
-@ResponseStatus(HttpStatus.NOT_FOUND)
+@ResponseStatus(HttpStatus.BAD_REQUEST)
 public class UsernamePasswordNotMatchException extends RuntimeException {
 
     private static final String MESSAGE = "아이디 혹은 비밀번호가 틀렸습니다.";
