@@ -1,7 +1,7 @@
 package shop.itbook.itbookauth.handler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,7 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication)
-        throws IOException, ServletException {
+        throws IOException {
 
         String accessToken = tokenProvider.createAccessToken(authentication);
         String refreshToken = tokenProvider.createRefreshToken(authentication);
@@ -35,5 +35,7 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
         redisTemplate.opsForHash().put("refreshToken", authentication.getPrincipal(), refreshToken);
 
         response.addHeader("Authorization", accessToken);
+        response.addHeader("Authorities",
+            new ObjectMapper().writeValueAsString(authentication.getAuthorities()));
     }
 }

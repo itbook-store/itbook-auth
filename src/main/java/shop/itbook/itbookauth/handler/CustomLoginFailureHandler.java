@@ -2,7 +2,6 @@ package shop.itbook.itbookauth.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
@@ -24,13 +23,11 @@ public class CustomLoginFailureHandler implements AuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
                                         AuthenticationException exception)
-        throws IOException, ServletException {
+        throws IOException {
         response.setStatus(HttpStatus.BAD_REQUEST.value());
 
         CommonResponseBody<Void> commonResponseBody = new CommonResponseBody<>(
-            new CommonResponseBody.CommonHeader(false, HttpStatus.BAD_REQUEST.value(),
-                MESSAGE),
-            null
+            new CommonResponseBody.CommonHeader(MESSAGE), null
         );
 
         response.getOutputStream()

@@ -34,16 +34,9 @@ public class CustomAuthenticationManager implements AuthenticationManager {
         UserDetails userDetails =
             userDetailsService.loadUserByUsername((String) authentication.getPrincipal());
 
-        /* TODO -> 임시 방편 */
-        if (!authentication.getCredentials().equals(userDetails.getPassword())) {
+        if (!checkPassword(authentication, userDetails)) {
             throw new UsernamePasswordNotMatchException();
         }
-
-        /* TODO -> 회원가입 비밀번호 암호화 되면 주석 해제 */
-//        if (!checkPassword(authentication, userDetails)) {
-//            throw new UsernamePasswordNotMatchException();
-//        }
-
 
         return new UsernamePasswordAuthenticationToken(
             userDetails.getUsername(),

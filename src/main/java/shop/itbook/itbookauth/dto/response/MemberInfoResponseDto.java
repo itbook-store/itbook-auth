@@ -1,5 +1,6 @@
 package shop.itbook.itbookauth.dto.response;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,4 +22,5 @@ public class MemberInfoResponseDto {
     private Long memberNo;
     private String memberId;
     private String password;
+    List<String> roleList;
 }

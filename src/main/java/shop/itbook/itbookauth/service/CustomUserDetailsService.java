@@ -1,8 +1,8 @@
 package shop.itbook.itbookauth.service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +17,7 @@ import shop.itbook.itbookauth.config.RequestServerProperties;
 import shop.itbook.itbookauth.dto.response.CommonResponseBody;
 import shop.itbook.itbookauth.dto.response.MemberInfoResponseDto;
 import shop.itbook.itbookauth.exception.UsernamePasswordNotMatchException;
+import shop.itbook.itbookauth.util.ResponseChecker;
 
 /**
  * RestTemplate 을 이용하여 ShopServer 에서 회원 정보를 가져오기 위한 CustomUserDetailsService 클래스 입니다.
@@ -33,35 +34,34 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private final RequestServerProperties requestServerProperties;
 
+    private static final String GET_MEMBER_API_PREFIX = "/api/service/members?memberId=";
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         ResponseEntity<CommonResponseBody<MemberInfoResponseDto>> getMemberInfo =
             adaptor.getMemberInfoAdaptor(
-                requestServerProperties.getServer() + "/api/service/members?memberId=" + username
+                requestServerProperties.getServer() + GET_MEMBER_API_PREFIX + username
             );
 
         if (Objects.isNull(getMemberInfo.getBody())) {
             throw new UsernamePasswordNotMatchException();
         }
 
-        if (!getSuccessfulSign(getMemberInfo)) {
-            throw new UsernamePasswordNotMatchException();
-        }
+        ResponseChecker.checkFail(
+            getMemberInfo.getStatusCode(),
+            Objects.requireNonNull(getMemberInfo.getBody()).getHeader()
+        );
 
-        log.info("getSuccessfulSign {}", getSuccessfulSign(getMemberInfo));
-        List.of(new SimpleGrantedAuthority("ROLE_USER"), new SimpleGrantedAuthority("ROLE_ADMIN"));
+        List<SimpleGrantedAuthority> authorities = getMemberInfo.getBody().getResult().getRoleList()
+            .stream()
+            .map(SimpleGrantedAuthority::new)
+            .collect(Collectors.toList());
 
         return new User(
             getMemberInfo.getBody().getResult().getMemberId(),
             getMemberInfo.getBody().getResult().getPassword(),
-            List.of(new SimpleGrantedAuthority("ROLE_USER"),
-                new SimpleGrantedAuthority("ROLE_ADMIN"))
+            authorities
         );
-    }
-
-    private static Boolean getSuccessfulSign(
-        ResponseEntity<CommonResponseBody<MemberInfoResponseDto>> getMemberInfo) {
-        return getMemberInfo.getBody().getHeader().getIsSuccessful();
     }
 }
