@@ -2,6 +2,7 @@ package shop.itbook.itbookauth.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -32,10 +33,13 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
         String accessToken = tokenProvider.createAccessToken(authentication);
         String refreshToken = tokenProvider.createRefreshToken(authentication);
 
-        redisTemplate.opsForHash().put("refreshToken", authentication.getPrincipal(), refreshToken);
+        String uuid = UUID.randomUUID().toString();
+
+        redisTemplate.opsForHash().put("refreshToken", uuid, refreshToken);
 
         response.addHeader("Authorization", accessToken);
         response.addHeader("Authorities",
             new ObjectMapper().writeValueAsString(authentication.getAuthorities()));
+        response.addHeader("UUID", uuid);
     }
 }
