@@ -39,7 +39,7 @@ public class TokenProvider {
      *
      * @param authentication 인가된 Authentication 객체 입니다.
      * @param expirationTime JWT 토큰에 대한 만료 시간입니다.
-     * @return
+     * @return JWT 토큰
      */
     private String createToken(Authentication authentication, Long expirationTime) {
 

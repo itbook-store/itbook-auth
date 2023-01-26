@@ -59,7 +59,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             .collect(Collectors.toList());
 
         return new User(
-            getMemberInfo.getBody().getResult().getMemberId(),
+            String.valueOf(getMemberInfo.getBody().getResult().getMemberNo()),
             getMemberInfo.getBody().getResult().getPassword(),
             authorities
         );
