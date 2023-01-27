@@ -2,10 +2,10 @@ package shop.itbook.itbookauth.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -17,13 +17,18 @@ import shop.itbook.itbookauth.token.TokenProvider;
  * @author 강명관
  * @since 1.0
  */
-
+@Slf4j
 @RequiredArgsConstructor
 public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private final RedisTemplate<String, String> redisTemplate;
 
     private final TokenProvider tokenProvider;
+
+    private static final String HEADER_ACCESSTOKEN = "Authorization-AccessToken";
+    private static final String HEADER_REFRESHTOKEN = "Authorization-RefreshToken";
+    private static final String HEADER_NO = "Authorization-MemberNo";
+    private static final String HEADER_AUTHORITIES = "Authorities";
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -33,13 +38,14 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
         String accessToken = tokenProvider.createAccessToken(authentication);
         String refreshToken = tokenProvider.createRefreshToken(authentication);
 
-        String uuid = UUID.randomUUID().toString();
+        /* auth redis 토큰 저장 */
+        redisTemplate.opsForHash().put("accessToken", authentication.getPrincipal(), accessToken);
+        redisTemplate.opsForHash().put("refreshToken", authentication.getPrincipal(), refreshToken);
 
-        redisTemplate.opsForHash().put("refreshToken", uuid, refreshToken);
-
-        response.addHeader("Authorization", accessToken);
-        response.addHeader("Authorities",
+        response.addHeader(HEADER_ACCESSTOKEN, accessToken);
+        response.addHeader(HEADER_REFRESHTOKEN, refreshToken);
+        response.addHeader(HEADER_AUTHORITIES,
             new ObjectMapper().writeValueAsString(authentication.getAuthorities()));
-        response.addHeader("UUID", uuid);
+        response.addHeader(HEADER_NO, (String) authentication.getPrincipal());
     }
 }
