@@ -9,6 +9,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import shop.itbook.itbookauth.dto.UserDetailsDto;
 import shop.itbook.itbookauth.exception.UsernamePasswordNotMatchException;
 
 /**
@@ -38,8 +39,13 @@ public class CustomAuthenticationManager implements AuthenticationManager {
             throw new UsernamePasswordNotMatchException();
         }
 
+        UserDetailsDto userDetailsDto = new UserDetailsDto(
+            Long.valueOf(userDetails.getUsername()),
+            String.valueOf(authentication.getPrincipal())
+        );
+
         return new UsernamePasswordAuthenticationToken(
-            userDetails.getUsername(),
+            userDetailsDto,
             userDetails.getPassword(),
             userDetails.getAuthorities()
         );
