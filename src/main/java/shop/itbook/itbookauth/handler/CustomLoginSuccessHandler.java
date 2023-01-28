@@ -1,5 +1,6 @@
 package shop.itbook.itbookauth.handler;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
@@ -9,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import shop.itbook.itbookauth.dto.TokenDto;
+import shop.itbook.itbookauth.dto.UserDetailsDto;
 import shop.itbook.itbookauth.token.TokenProvider;
 
 /**
@@ -25,10 +28,9 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private final TokenProvider tokenProvider;
 
-    private static final String HEADER_ACCESSTOKEN = "Authorization-AccessToken";
-    private static final String HEADER_REFRESHTOKEN = "Authorization-RefreshToken";
-    private static final String HEADER_NO = "Authorization-MemberNo";
     private static final String HEADER_AUTHORITIES = "Authorities";
+    private static final String HEADER_USER_DETAIL = "Authorities-UserDetails";
+    private static final String HEADER_TOKEN = "Authorities-Token";
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -38,14 +40,33 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
         String accessToken = tokenProvider.createAccessToken(authentication);
         String refreshToken = tokenProvider.createRefreshToken(authentication);
 
-        /* auth redis 토큰 저장 */
-        redisTemplate.opsForHash().put("accessToken", authentication.getPrincipal(), accessToken);
-        redisTemplate.opsForHash().put("refreshToken", authentication.getPrincipal(), refreshToken);
+        TokenDto tokenDto = new TokenDto(
+            accessToken,
+            refreshToken,
+            tokenProvider.getAccessTokenExpirationTime(),
+            tokenProvider.getRefreshTokenExpirationTime()
+        );
 
-        response.addHeader(HEADER_ACCESSTOKEN, accessToken);
-        response.addHeader(HEADER_REFRESHTOKEN, refreshToken);
-        response.addHeader(HEADER_AUTHORITIES,
-            new ObjectMapper().writeValueAsString(authentication.getAuthorities()));
-        response.addHeader(HEADER_NO, (String) authentication.getPrincipal());
+        UserDetailsDto userDetailsDto = (UserDetailsDto) authentication.getPrincipal();
+        String memberNo = String.valueOf(userDetailsDto.getMemberNo());
+
+        redisTemplate.opsForHash().put("accessToken", memberNo, accessToken);
+        redisTemplate.opsForHash().put("refreshToken", memberNo, refreshToken);
+
+        response.addHeader(HEADER_USER_DETAIL, objectToJsonString(authentication.getPrincipal()));
+        response.addHeader(HEADER_TOKEN, objectToJsonString(tokenDto));
+        response.addHeader(HEADER_AUTHORITIES, objectToJsonString(authentication.getAuthorities()));
+
+    }
+
+    /**
+     * 객체를 httpHeader에 보내기 위한 파싱 메서드입니다.
+     *
+     * @param object json으로 변환하려는 Object
+     * @return jsonString
+     * @throws JsonProcessingException json parsing 에러
+     */
+    private String objectToJsonString(Object object) throws JsonProcessingException {
+        return new ObjectMapper().writeValueAsString(object);
     }
 }
