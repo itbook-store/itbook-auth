@@ -34,7 +34,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private final RequestServerProperties requestServerProperties;
 
-    private static final String GET_MEMBER_API_PREFIX = "/api/service/members?memberId=";
+    private static final String GET_MEMBER_API_PREFIX = "/api/members?memberId=";
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
