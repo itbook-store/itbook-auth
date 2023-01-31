@@ -55,7 +55,7 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 
         response.addHeader(HEADER_USER_DETAIL, objectToJsonString(authentication.getPrincipal()));
         response.addHeader(HEADER_TOKEN, objectToJsonString(tokenDto));
-        response.addHeader(HEADER_AUTHORITIES, objectToJsonString(authentication.getAuthorities()));
+        response.addHeader(HEADER_AUTHORITIES, authentication.getAuthorities().toString());
 
     }
 
