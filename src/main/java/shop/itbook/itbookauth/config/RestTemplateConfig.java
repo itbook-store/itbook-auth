@@ -1,10 +1,12 @@
 package shop.itbook.itbookauth.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Duration;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
+import shop.itbook.itbookauth.handler.RestTemplateResponseErrorHandler;
 
 /**
  * RestTemplate 설정을 하고 전역으로 사용하기 위한 클래스 입니다.
@@ -23,6 +25,7 @@ public class RestTemplateConfig {
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplateBuilder()
+            .errorHandler(new RestTemplateResponseErrorHandler(new ObjectMapper()))
             .setReadTimeout(Duration.ofSeconds(3L))
             .setConnectTimeout(Duration.ofSeconds(3L))
             .build();
