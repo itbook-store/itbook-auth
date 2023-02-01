@@ -50,7 +50,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         ResponseChecker.checkFail(
             getMemberInfo.getStatusCode(),
-            Objects.requireNonNull(getMemberInfo.getBody()).getHeader()
+            getMemberInfo.getBody().getHeader().getResultMessage()
         );
 
         List<SimpleGrantedAuthority> authorities = getMemberInfo.getBody().getResult().getRoleList()
