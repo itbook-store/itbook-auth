@@ -12,10 +12,12 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
 import shop.itbook.itbookauth.adaptor.RestTemplateAdaptor;
 import shop.itbook.itbookauth.filter.CustomAuthenticationFilter;
 import shop.itbook.itbookauth.handler.CustomLoginFailureHandler;
 import shop.itbook.itbookauth.handler.CustomLoginSuccessHandler;
+import shop.itbook.itbookauth.handler.CustomLogoutHandler;
 import shop.itbook.itbookauth.manager.CustomAuthenticationManager;
 import shop.itbook.itbookauth.service.CustomUserDetailsService;
 import shop.itbook.itbookauth.token.TokenProvider;
@@ -53,6 +55,10 @@ public class SecurityConfig {
             .loginProcessingUrl("/auth/login")
             .successHandler(customLoginSuccessHandler(null, null))
             .failureHandler(customFailureHandler())
+            .and()
+            .logout()
+            .logoutUrl("/auth/logout")
+            .addLogoutHandler(customLogoutHandler(null))
             .and()
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -128,6 +134,11 @@ public class SecurityConfig {
     @Bean
     public AuthenticationFailureHandler customFailureHandler() {
         return new CustomLoginFailureHandler();
+    }
+
+    @Bean
+    public LogoutHandler customLogoutHandler(RedisTemplate<String, String> redisTemplate) {
+        return new CustomLogoutHandler(redisTemplate);
     }
 
 

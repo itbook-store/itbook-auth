@@ -1,5 +1,6 @@
 package shop.itbook.itbookauth.dto;
 
+import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDetailsDto {
+public class UserDetailsDto implements Serializable {
     private Long memberNo;
     private String memberId;
 }
