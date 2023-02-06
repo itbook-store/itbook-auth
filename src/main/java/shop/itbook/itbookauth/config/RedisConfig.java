@@ -1,6 +1,5 @@
 package shop.itbook.itbookauth.config;
 
-import java.util.concurrent.TimeUnit;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.BeanClassLoaderAware;
@@ -54,15 +53,15 @@ public class RedisConfig implements BeanClassLoaderAware {
     }
 
     /**
-     * RedisConnectionFactory 를 통해 생성된 Redis를 사용할 수 있게 해주는 @Bean
+     * RedisConnectionFactory 를 통해 생성된 Redis를 사용할 수 있게 해주는 @Bean.
      *
      * @return the redis template
      * @author 강명관 *
      */
     @SuppressWarnings("java:S1452") // 레디스의 key value의 타입을 자유롭게 지정하기 위함.
     @Bean
-    public RedisTemplate<?, ?> redisTemplate() {
-        RedisTemplate<byte[], byte[]> redisTemplate = new RedisTemplate<>();
+    public RedisTemplate<String, String> redisTemplate() {
+        RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory());
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());

@@ -1,9 +1,11 @@
 package shop.itbook.itbookauth.token;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwt;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.SignatureException;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import lombok.Getter;
@@ -14,6 +16,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import shop.itbook.itbookauth.dto.UserDetailsDto;
+import shop.itbook.itbookauth.exception.InvalidTokenRequestException;
 
 /**
  * JWT 토큰 발행을 담당하는 클래스 입니다.
@@ -32,6 +35,10 @@ public class TokenProvider {
     private String secretKey;
     private static final Long ACCESS_TOKEN_EXPIRATION_TIME = 60 * 60L;
     private static final Long REFRESH_TOKEN_EXPIRATION_TIME = 60 * 60L * 3;
+
+    private static final String SIGNATURE_EXCEPTION_MESSAGE = "조작된 토큰형식입니다.";
+
+    private static final String EXPIRATION_EXCEPTION_MESSAGE = "만료된 토큰입니다.";
 
     /**
      * JWT 토큰에 대해 발급하는 메서드 입니다.
@@ -83,18 +90,23 @@ public class TokenProvider {
      * @param token the token
      * @return the string
      */
-    public String validateAndExtract(String token) {
+    public Claims validateAndExtract(String token) {
 
-        Jwt jwt = Jwts.parserBuilder()
-            .setSigningKey(secretKey)
-            .build()
-            .parse(token);
+        Jws<Claims> claimsJws;
+
+        try {
+            claimsJws = Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token);
+        } catch (SignatureException e) {
+            throw new InvalidTokenRequestException(SIGNATURE_EXCEPTION_MESSAGE);
+        } catch (ExpiredJwtException e) {
+            throw new InvalidTokenRequestException(EXPIRATION_EXCEPTION_MESSAGE);
+        }
 
 
-        log.info("body {}", jwt);
-        log.info("jwt.getBody {}", jwt.getBody());
-
-        return (String) jwt.getBody();
+        return claimsJws.getBody();
     }
 
     /**
