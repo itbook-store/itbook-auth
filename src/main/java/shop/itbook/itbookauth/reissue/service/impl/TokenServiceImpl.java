@@ -36,7 +36,7 @@ public class TokenServiceImpl implements TokenService {
     private static final String BLACK_LIST = "BLACK_LIST";
 
     private static final String NOT_REGISTRATION_TOKEN_EXCEPTION_MESSAGE = "등록되지 않은 토큰입니다.";
-    
+
     /**
      * {@inheritDoc}
      */
@@ -76,9 +76,6 @@ public class TokenServiceImpl implements TokenService {
 
     private static void checkValidToken(String refreshToken, String oldRefreshToken) {
         if (!refreshToken.equals(oldRefreshToken)) {
-            log.info("여기서 걸리나?");
-            log.info("refreshToken {}", refreshToken);
-            log.info("oldRefreshToken {}", oldRefreshToken);
             throw new InvalidTokenRequestException(NOT_REGISTRATION_TOKEN_EXCEPTION_MESSAGE);
         }
     }

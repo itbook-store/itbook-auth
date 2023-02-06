@@ -25,7 +25,6 @@ public class CustomLogoutHandler implements LogoutHandler {
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response,
                        Authentication authentication) {
-        log.info("잘 들어오나?");
 
         String memberNo = request.getHeader("Auth-MemberNo");
 
