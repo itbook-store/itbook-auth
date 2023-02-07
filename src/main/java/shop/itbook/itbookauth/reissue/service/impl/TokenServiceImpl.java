@@ -49,7 +49,7 @@ public class TokenServiceImpl implements TokenService {
 
         String oldRefreshToken = (String) redisTemplate.opsForHash().get("refreshToken", memberNo);
 
-        checkValidToken(refreshToken, oldRefreshToken);
+//        checkValidToken(refreshToken, oldRefreshToken);
 
         Authentication authenticationToken = createAuthenticationToken(memberNo, claims);
 
