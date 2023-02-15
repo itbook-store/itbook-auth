@@ -23,9 +23,9 @@ public class AuthControllerAdvisor {
      * Auth서버 컨트롤러 단에서 발생하는 Exception을 처리하기위한 메서드 입니다.
      *
      * @param e Exception
-     * @return 공용 응답 객체 Status 400
+     * @return 공용 응답 객체 Status 401
      */
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(value = {
         InvalidTokenRequestException.class,
         JwtException.class,
